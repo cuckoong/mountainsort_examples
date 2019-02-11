@@ -20,9 +20,17 @@ def sort_dataset(*,dataset_dir,output_dir,freq_min=300,freq_max=6000,adjacency_r
         opts=opts
     )
     
+    # Out_artifacts
+    out_artifacts(
+    	timeseries=output_dir+'/filt.mda.prv',
+    	timeseries_out=output_dir+'/pre_whiten.mda.prv',
+    	opts=opts
+    )
+
+
     # Whiten
     whiten(
-        timeseries=output_dir+'/filt.mda.prv',
+        timeseries=output_dir+'/pre_whiten.mda.prv',
         timeseries_out=output_dir+'/pre.mda.prv',
         opts=opts
     )
@@ -82,6 +90,19 @@ def bandpass_filter(*,timeseries,timeseries_out,samplerate,freq_min,freq_max,opt
         },
         opts
     )
+
+def out_artifacts(*,timeseries,timeseries_out,opts={}):
+	return mlp.addProcess(
+		'ms3.mask_out_artifacts',
+		{
+            'timeseries':timeseries		
+        },
+        {
+        	'timeseries_out':timeseries_out
+        },
+        {},
+        opts
+	)
 
 def whiten(*,timeseries,timeseries_out,opts={}):
     return mlp.addProcess(
