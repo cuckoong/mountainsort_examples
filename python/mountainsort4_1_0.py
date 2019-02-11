@@ -22,15 +22,17 @@ def sort_dataset(*,dataset_dir,output_dir,freq_min=300,freq_max=6000,adjacency_r
     
     # Out_artifacts
     out_artifacts(
-    	timeseries=output_dir+'/filt.mda.prv',
-    	timeseries_out=output_dir+'/pre_whiten.mda.prv',
-    	opts=opts
+        timeseries=output_dir+'/filt.mda.prv',
+        timeseries_out=output_dir+'/prewhiten.mda.prv',
+        threshold=6,
+        interval_size=2000,
+        opts=opts
     )
 
 
     # Whiten
     whiten(
-        timeseries=output_dir+'/pre_whiten.mda.prv',
+        timeseries=output_dir+'/prewhiten.mda.prv',
         timeseries_out=output_dir+'/pre.mda.prv',
         opts=opts
     )
@@ -91,18 +93,21 @@ def bandpass_filter(*,timeseries,timeseries_out,samplerate,freq_min,freq_max,opt
         opts
     )
 
-def out_artifacts(*,timeseries,timeseries_out,opts={}):
-	return mlp.addProcess(
-		'ms3.mask_out_artifacts',
-		{
-            'timeseries':timeseries		
+def out_artifacts(*,timeseries,threshold,interval_size,timeseries_out,opts={}):
+    return mlp.addProcess(
+        'ms3.mask_out_artifacts',
+        {
+            'timeseries':timeseries
         },
         {
-        	'timeseries_out':timeseries_out
+            'timeseries_out':timeseries_out
         },
-        {},
+        {   
+            'threshold':threshold,
+            'interval_size':interval_size
+        },
         opts
-	)
+    )
 
 def whiten(*,timeseries,timeseries_out,opts={}):
     return mlp.addProcess(
